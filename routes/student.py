@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, send_from_directory
+from flask import Blueprint, render_template, redirect, url_for, flash, request, send_from_directory, current_app
 from flask_login import login_required, current_user
 from functools import wraps
 from models import db, Course, CourseEnrollment, Assignment, Submission, Material, User, Message
@@ -67,26 +67,59 @@ def submit_assignment(assignment_id):
         return redirect(url_for('student.dashboard'))
         
     if request.method == 'POST':
-        content = request.form.get('content')
-        file = request.files.get('submission_file')
-        
-        submission = Submission(
-            assignment_id=assignment_id,
-            student_id=current_user.id,
-            content=content
-        )
-        
-        if file:
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            submission.file_path = filename
+        try:
+            content = request.form.get('content')
+            file = request.files.get('submission_file')
+            file_path = None
             
-        db.session.add(submission)
-        db.session.commit()
-        flash('Assignment submitted successfully!')
-        return redirect(url_for('student.dashboard'))
-        
+            if file and file.filename:
+                filename = secure_filename(file.filename)
+                # Create submissions directory
+                submissions_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], 'submissions')
+                os.makedirs(submissions_dir, exist_ok=True)
+                # Save with unique filename
+                file_path = os.path.join('submissions', f"{current_user.id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{filename}")
+                file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], file_path))
+
+            submission = Submission(
+                assignment_id=assignment_id,
+                student_id=current_user.id,
+                content=content,
+                file_path=file_path
+            )
+            
+            db.session.add(submission)
+            db.session.commit()
+            flash('Assignment submitted successfully!', 'success')
+            return redirect(url_for('student.view_assignment', assignment_id=assignment_id))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error submitting assignment: {str(e)}', 'error')
+    
     return render_template('student/submit_assignment.html', assignment=assignment)
+
+@student.route('/submission/download/<int:submission_id>')
+@login_required
+def download_submission(submission_id):
+    submission = Submission.query.get_or_404(submission_id)
+    if current_user.id != submission.student_id and \
+       current_user.role != 'teacher' and \
+       current_user.role != 'admin':
+        flash('Access denied', 'error')
+        return redirect(url_for('index'))
+        
+    if submission.file_path:
+        try:
+            return send_from_directory(
+                current_app.config['UPLOAD_FOLDER'],
+                submission.file_path,
+                as_attachment=True
+            )
+        except Exception as e:
+            flash(f'Error downloading file: {str(e)}', 'error')
+    
+    return redirect(url_for('student.view_assignment', assignment_id=submission.assignment_id))
 
 @student.route('/student/submissions')
 @login_required
@@ -190,3 +223,55 @@ def chat(user_id):
     return render_template('student/chat.html', 
                          other_user=other_user, 
                          messages=messages)
+
+@student.route('/student/assignment/<int:assignment_id>/view')
+@login_required
+@student_required
+def view_assignment(assignment_id):
+    assignment = Assignment.query.get_or_404(assignment_id)
+    # Check if student is enrolled in the course
+    enrollment = CourseEnrollment.query.filter_by(
+        course_id=assignment.course_id,
+        student_id=current_user.id
+    ).first()
+    
+    if not enrollment:
+        flash('You are not enrolled in this course', 'error')
+        return redirect(url_for('student.dashboard'))
+        
+    # Get student's submission if exists
+    submission = Submission.query.filter_by(
+        assignment_id=assignment_id,
+        student_id=current_user.id
+    ).first()
+    
+    return render_template('student/view_assignment.html', 
+                         assignment=assignment,
+                         submission=submission)
+
+@student.route('/student/assignment/download/<int:assignment_id>')
+@login_required
+@student_required
+def download_assignment_file(assignment_id):
+    assignment = Assignment.query.get_or_404(assignment_id)
+    # Check if student is enrolled
+    enrollment = CourseEnrollment.query.filter_by(
+        course_id=assignment.course_id,
+        student_id=current_user.id
+    ).first()
+    
+    if not enrollment:
+        flash('Access denied', 'error')
+        return redirect(url_for('student.dashboard'))
+        
+    if assignment.file_path:
+        try:
+            return send_from_directory(
+                current_app.config['UPLOAD_FOLDER'],
+                assignment.file_path,
+                as_attachment=True
+            )
+        except Exception as e:
+            flash(f'Error downloading file: {str(e)}', 'error')
+            
+    return redirect(url_for('student.view_assignment', assignment_id=assignment_id))

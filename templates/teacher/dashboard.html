@@ -62,7 +62,9 @@
                                     <td>{{ submission.assignment.title }}</td>
                                     <td>{{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') }}</td>
                                     <td>
-                                        <button class="btn btn-sm btn-primary" 
+                                        <a href="{{ url_for('teacher.view_submission', submission_id=submission.id) }}" 
+                                           class="btn btn-info btn-sm">View Solution</a>
+                                        <button class="btn btn-primary btn-sm" 
                                                 onclick="showGradeModal('{{ submission.id }}')">
                                             Grade
                                         </button>

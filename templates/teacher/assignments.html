@@ -26,7 +26,7 @@
                 <h5 class="card-title mb-0">Create New Assignment</h5>
             </div>
             <div class="card-body">
-                <form method="POST">
+                <form method="POST" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="title" class="form-label">Title</label>
@@ -40,6 +40,10 @@
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
                         <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="assignment_file" class="form-label">Assignment File</label>
+                        <input type="file" class="form-control" id="assignment_file" name="assignment_file">
                     </div>
                     <button type="submit" class="btn btn-primary">Create Assignment</button>
                 </form>
@@ -74,6 +78,10 @@
                                 <td>
                                     <a href="{{ url_for('teacher.view_submissions', assignment_id=assignment.id) }}" 
                                        class="btn btn-sm btn-primary">View Submissions</a>
+                                    {% if assignment.file_path %}
+                                    <a href="{{ url_for('teacher.download_assignment_file', assignment_id=assignment.id) }}" 
+                                       class="btn btn-sm btn-secondary">Download File</a>
+                                    {% endif %}
                                     <button class="btn btn-sm btn-danger" 
                                             onclick="confirmDelete('{{ assignment.id }}')">Delete</button>
                                 </td>

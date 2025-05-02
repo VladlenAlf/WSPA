@@ -1,0 +1,61 @@
+{% extends "student/base.html" %}
+
+{% block title %}View Assignment - USOS Student{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h3>{{ assignment.title }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- Assignment Description -->
+                    <h5>Description:</h5>
+                    <p>{{ assignment.description }}</p>
+                    
+                    <!-- Due Date -->
+                    <p><strong>Due Date:</strong> {{ assignment.due_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                    
+                    <!-- Assignment File -->
+                    {% if assignment.file_path %}
+                    <div class="mb-3">
+                        <h5>Assignment Materials:</h5>
+                        <a href="{{ url_for('student.download_assignment_file', assignment_id=assignment.id) }}" 
+                           class="btn btn-primary">
+                            <i class="fas fa-download"></i> Download Assignment File
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="col-md-4">
+                    <!-- Submission Status -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Submission Status</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if submission %}
+                                <p class="text-success">Submitted</p>
+                                <p>Submitted on: {{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                                {% if submission.grade %}
+                                    <p>Grade: {{ submission.grade }}</p>
+                                    <p>Feedback: {{ submission.feedback or 'No feedback provided' }}</p>
+                                {% else %}
+                                    <p class="text-warning">Not graded yet</p>
+                                {% endif %}
+                            {% else %}
+                                <p class="text-danger">Not submitted yet</p>
+                                <a href="{{ url_for('student.submit_assignment', assignment_id=assignment.id) }}" 
+                                   class="btn btn-primary">Submit Assignment</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

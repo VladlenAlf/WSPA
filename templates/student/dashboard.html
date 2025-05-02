@@ -71,6 +71,8 @@
                                     <p class="mb-1">{{ assignment.description }}</p>
                                     <a href="{{ url_for('student.submit_assignment', assignment_id=assignment.id) }}" 
                                        class="btn btn-sm btn-primary">Submit</a>
+                                    <a href="{{ url_for('student.view_assignment', assignment_id=assignment.id) }}" 
+                                       class="btn btn-sm btn-primary">View Assignment</a>
                                 </div>
                             {% endfor %}
                             </div>

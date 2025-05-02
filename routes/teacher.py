@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, send_from_directory, current_app
 from flask_login import login_required, current_user
 from functools import wraps
-from models import db, Course, Assignment, Submission, Material
+from models import db, Course, Assignment, Submission, Material, User
 from datetime import datetime
 from werkzeug.utils import secure_filename
 import os
@@ -50,20 +50,33 @@ def manage_assignments(course_id):
         return redirect(url_for('teacher.dashboard'))
     
     if request.method == 'POST':
-        title = request.form.get('title')
-        description = request.form.get('description')
-        due_date = datetime.strptime(request.form.get('due_date'), '%Y-%m-%dT%H:%M')
-        
-        assignment = Assignment(
-            course_id=course_id,
-            title=title,
-            description=description,
-            due_date=due_date
-        )
-        db.session.add(assignment)
-        db.session.commit()
-        flash('Assignment created successfully!')
-        
+        try:
+            file = request.files.get('assignment_file')
+            file_path = None
+            
+            if file and file.filename:
+                filename = secure_filename(file.filename)
+                # Ensure assignments directory exists
+                assignments_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], 'assignments')
+                os.makedirs(assignments_dir, exist_ok=True)
+                # Save file with unique filename
+                file_path = os.path.join('assignments', f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{filename}")
+                file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], file_path))
+
+            assignment = Assignment(
+                course_id=course_id,
+                title=request.form['title'],
+                description=request.form['description'],
+                file_path=file_path,
+                due_date=datetime.strptime(request.form['due_date'], '%Y-%m-%dT%H:%M')
+            )
+            db.session.add(assignment)
+            db.session.commit()
+            flash('Assignment created successfully!', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error creating assignment: {str(e)}', 'error')
+
     assignments = Assignment.query.filter_by(course_id=course_id).all()
     return render_template('teacher/assignments.html', 
                          course=course,
@@ -117,3 +130,97 @@ def get_submission(submission_id):
         'content': submission.content,
         'file_path': submission.file_path
     })
+
+@teacher.route('/teacher/course/<int:course_id>/assignment/create', methods=['GET', 'POST'])
+@login_required
+@teacher_required
+def create_assignment(course_id):
+    course = Course.query.get_or_404(course_id)
+    if request.method == 'POST':
+        try:
+            # Handle file upload
+            file = request.files.get('assignment_file')
+            file_path = None
+            
+            if file and file.filename:
+                filename = secure_filename(file.filename)
+                # Create assignments directory if it doesn't exist
+                assignments_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], 'assignments')
+                os.makedirs(assignments_dir, exist_ok=True)
+                file_path = os.path.join('assignments', filename)
+                file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], file_path))
+
+            assignment = Assignment(
+                course_id=course_id,
+                title=request.form['title'],
+                description=request.form['description'],
+                file_path=file_path,
+                due_date=datetime.strptime(request.form['due_date'], '%Y-%m-%dT%H:%M')
+            )
+            
+            db.session.add(assignment)
+            db.session.commit()
+            flash('Assignment created successfully!', 'success')
+            return redirect(url_for('teacher.manage_assignments', course_id=course_id))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error creating assignment: {str(e)}', 'error')
+            
+    return render_template('teacher/create_assignment.html', course=course)
+
+@teacher.route('/download/assignment/<int:assignment_id>')
+@login_required
+def download_assignment_file(assignment_id):
+    assignment = Assignment.query.get_or_404(assignment_id)
+    
+    if not assignment.file_path:
+        flash('No file attached to this assignment', 'error')
+        return redirect(request.referrer or url_for('index'))
+        
+    try:
+        return send_from_directory(
+            current_app.config['UPLOAD_FOLDER'],
+            assignment.file_path,
+            as_attachment=True
+        )
+    except Exception as e:
+        flash(f'Error downloading file: {str(e)}', 'error')
+        return redirect(request.referrer or url_for('index'))
+
+@teacher.route('/assignment/file/<path:filename>')
+@login_required
+def download_assignment_file_by_filename(filename):
+    return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)
+
+@teacher.route('/teacher/submission/<int:submission_id>/view')
+@login_required
+@teacher_required
+def view_submission(submission_id):
+    submission = Submission.query.get_or_404(submission_id)
+    # Verify teacher has access to this submission
+    if submission.assignment.course.teacher_id != current_user.id:
+        flash('Access denied', 'error')
+        return redirect(url_for('teacher.dashboard'))
+    
+    return render_template('teacher/view_submission.html', 
+                         submission=submission,
+                         student=User.query.get(submission.student_id))
+
+@teacher.route('/teacher/submission/download/<int:submission_id>')
+@login_required
+@teacher_required
+def download_submission_file(submission_id):
+    submission = Submission.query.get_or_404(submission_id)
+    if submission.assignment.course.teacher_id != current_user.id:
+        flash('Access denied', 'error')
+        return redirect(url_for('teacher.dashboard'))
+        
+    if submission.file_path:
+        return send_from_directory(
+            current_app.config['UPLOAD_FOLDER'],
+            submission.file_path,
+            as_attachment=True
+        )
+    flash('No file attached to this submission', 'error')
+    return redirect(url_for('teacher.view_submission', submission_id=submission_id))

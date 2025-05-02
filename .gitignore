@@ -23,3 +23,12 @@ Thumbs.db
 .idea/
 .vscode/
 *.iml
+
+uploads/assignments/*
+uploads/submissions/*
+
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc 

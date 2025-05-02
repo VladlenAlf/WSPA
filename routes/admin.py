@@ -130,6 +130,49 @@ def create_course():
     teachers = User.query.filter_by(role='teacher').all()
     return render_template('admin/create_course.html', teachers=teachers)
 
+@admin.route('/admin/course/<int:course_id>/enrollments', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def manage_enrollments(course_id):
+    course = Course.query.get_or_404(course_id)
+    if request.method == 'POST':
+        student_id = request.form.get('student_id')
+        action = request.form.get('action')
+        
+        try:
+            if action == 'enroll':
+                enrollment = CourseEnrollment(course_id=course_id, student_id=student_id)
+                db.session.add(enrollment)
+                log_admin_action(f"Enrolled student {student_id} in course {course.name}")
+                flash('Student enrolled successfully!', 'success')
+            elif action == 'unenroll':
+                enrollment = CourseEnrollment.query.filter_by(
+                    course_id=course_id, 
+                    student_id=student_id
+                ).first()
+                if enrollment:
+                    db.session.delete(enrollment)
+                    log_admin_action(f"Unenrolled student {student_id} from course {course.name}")
+                    flash('Student unenrolled successfully!', 'success')
+            
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error managing enrollment: {str(e)}', 'error')
+    
+    enrolled_students = User.query.join(CourseEnrollment).filter(
+        CourseEnrollment.course_id == course_id
+    ).all()
+    available_students = User.query.filter(
+        User.role == 'student',
+        ~User.id.in_([s.id for s in enrolled_students])
+    ).all()
+    
+    return render_template('admin/manage_enrollments.html',
+                         course=course,
+                         enrolled_students=enrolled_students,
+                         available_students=available_students)
+
 @admin.route('/admin/logs')
 @login_required
 @admin_required
