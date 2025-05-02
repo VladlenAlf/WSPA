@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Assignments - USOS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('teacher.dashboard') }}">USOS Teacher</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="{{ url_for('teacher.dashboard') }}">Dashboard</a>
+                <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2>{{ course.name }} - Assignments</h2>
+        
+        <!-- Create Assignment Form -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Create New Assignment</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="due_date" class="form-label">Due Date</label>
+                            <input type="datetime-local" class="form-control" id="due_date" name="due_date" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Assignment</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Assignments List -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Existing Assignments</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Due Date</th>
+                                <th>Submissions</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for assignment in assignments %}
+                            <tr>
+                                <td>{{ assignment.title }}</td>
+                                <td>{{ assignment.due_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    {{ assignment.submissions|length }}
+                                    <span class="text-muted">submissions</span>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('teacher.view_submissions', assignment_id=assignment.id) }}" 
+                                       class="btn btn-sm btn-primary">View Submissions</a>
+                                    <button class="btn btn-sm btn-danger" 
+                                            onclick="confirmDelete('{{ assignment.id }}')">Delete</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this assignment?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form id="deleteForm" method="POST">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function confirmDelete(assignmentId) {
+            const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            const form = document.getElementById('deleteForm');
+            form.action = `/teacher/assignment/${assignmentId}/delete`;
+            modal.show();
+        }
+    </script>
+</body>
+</html>
