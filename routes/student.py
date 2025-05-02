@@ -320,3 +320,28 @@ def download_assignment_file(assignment_id):
             flash(f'Error downloading file: {str(e)}', 'error')
             
     return redirect(url_for('student.view_assignment', assignment_id=assignment_id))
+
+@student.route('/student/profile', methods=['GET', 'POST'])
+@login_required
+@student_required
+def profile():
+    if request.method == 'POST':
+        try:
+            current_user.full_name = request.form['full_name']
+            current_user.email = request.form['email']
+            
+            if request.form.get('new_password'):
+                if current_user.check_password(request.form['current_password']):
+                    current_user.set_password(request.form['new_password'])
+                else:
+                    flash('Current password is incorrect', 'error')
+                    return redirect(url_for('student.profile'))
+            
+            db.session.commit()
+            flash('Profile updated successfully!', 'success')
+            return redirect(url_for('student.profile'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error updating profile: {str(e)}', 'error')
+    
+    return render_template('student/profile.html')

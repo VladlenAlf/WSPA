@@ -1,49 +1,56 @@
 {% extends "student/base.html" %}
 
-{% block title %}{{ course.name }} - Materials{% endblock %}
+{% block title %}Course Materials - USOS{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>{{ course.name }} - Assignments</h2>
-    
-    {% if assignments %}
-        <div class="list-group mt-4">
-            {% for assignment in assignments %}
-                <div class="list-group-item">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">{{ assignment.title }}</h5>
-                        <small>Due: {{ assignment.due_date.strftime('%Y-%m-%d %H:%M') }}</small>
-                    </div>
-                    <p class="mb-1">{{ assignment.description }}</p>
-                    
-                    {% if assignment.file_path %}
-                        <a href="{{ url_for('student.download_assignment_file', assignment_id=assignment.id) }}" 
-                           class="btn btn-sm btn-secondary">Download Assignment File</a>
-                    {% endif %}
-                    
-                    {% if assignment.id in submissions %}
-                        {% set submission = submissions[assignment.id] %}
-                        <div class="mt-2">
-                            <span class="badge bg-success">Submitted</span>
-                            {% if submission.grade %}
-                                <span class="badge bg-info">Grade: {{ submission.grade }}</span>
+<div class="card">
+    <div class="card-header">
+        <h3>{{ course.name }} - Materials</h3>
+    </div>
+    <div class="card-body">
+        <div class="container mt-4">
+            <h2>{{ course.name }} - Assignments</h2>
+            
+            {% if assignments %}
+                <div class="list-group mt-4">
+                    {% for assignment in assignments %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ assignment.title }}</h5>
+                                <small>Due: {{ assignment.due_date.strftime('%Y-%m-%d %H:%M') }}</small>
+                            </div>
+                            <p class="mb-1">{{ assignment.description }}</p>
+                            
+                            {% if assignment.file_path %}
+                                <a href="{{ url_for('student.download_assignment_file', assignment_id=assignment.id) }}" 
+                                   class="btn btn-sm btn-secondary">Download Assignment File</a>
+                            {% endif %}
+                            
+                            {% if assignment.id in submissions %}
+                                {% set submission = submissions[assignment.id] %}
+                                <div class="mt-2">
+                                    <span class="badge bg-success">Submitted</span>
+                                    {% if submission.grade %}
+                                        <span class="badge bg-info">Grade: {{ submission.grade }}</span>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <a href="{{ url_for('student.submit_assignment', assignment_id=assignment.id) }}" 
+                                   class="btn btn-sm btn-primary mt-2">Submit Solution</a>
                             {% endif %}
                         </div>
-                    {% else %}
-                        <a href="{{ url_for('student.submit_assignment', assignment_id=assignment.id) }}" 
-                           class="btn btn-sm btn-primary mt-2">Submit Solution</a>
-                    {% endif %}
+                    {% endfor %}
                 </div>
-            {% endfor %}
+            {% else %}
+                <div class="alert alert-info mt-4">
+                    No assignments available for this course yet.
+                </div>
+            {% endif %}
+            
+            <div class="mt-3">
+                <a href="{{ url_for('student.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+            </div>
         </div>
-    {% else %}
-        <div class="alert alert-info mt-4">
-            No assignments available for this course yet.
-        </div>
-    {% endif %}
-    
-    <div class="mt-3">
-        <a href="{{ url_for('student.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
     </div>
 </div>
 {% endblock %}

@@ -280,3 +280,66 @@ def chat_with_student(student_id):
                          other_user=student, 
                          messages=messages,
                          unread_messages=0)  # В чате все сообщения считаются прочитанными
+
+@teacher.route('/teacher/statistics')
+@login_required
+@teacher_required
+def course_statistics():
+    # Получаем все курсы учителя
+    courses = Course.query.filter_by(teacher_id=current_user.id).all()
+    statistics = []
+    
+    for course in courses:
+        # Получаем все оценки по этому курсу
+        submissions = Submission.query.join(Assignment)\
+            .filter(Assignment.course_id == course.id)\
+            .filter(Submission.grade != None).all()
+        
+        if submissions:
+            avg_grade = sum(s.grade for s in submissions) / len(submissions)
+            total_students = db.session.query(CourseEnrollment)\
+                .filter_by(course_id=course.id).count()
+            graded_students = db.session.query(Submission.student_id.distinct())\
+                .join(Assignment)\
+                .filter(Assignment.course_id == course.id)\
+                .filter(Submission.grade != None).count()
+        else:
+            avg_grade = 0
+            total_students = 0
+            graded_students = 0
+            
+        statistics.append({
+            'course': course,
+            'average_grade': round(avg_grade, 2),
+            'total_students': total_students,
+            'graded_students': graded_students,
+            'submissions_count': len(submissions)
+        })
+    
+    return render_template('teacher/statistics.html', statistics=statistics)
+
+@teacher.route('/teacher/profile', methods=['GET', 'POST'])
+@login_required
+@teacher_required
+def profile():
+    if request.method == 'POST':
+        try:
+            current_user.full_name = request.form['full_name']
+            current_user.email = request.form['email']
+            
+            # Проверка и обновление пароля
+            if request.form.get('new_password'):
+                if current_user.check_password(request.form['current_password']):
+                    current_user.set_password(request.form['new_password'])
+                else:
+                    flash('Current password is incorrect', 'error')
+                    return redirect(url_for('teacher.profile'))
+            
+            db.session.commit()
+            flash('Profile updated successfully!', 'success')
+            return redirect(url_for('teacher.profile'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error updating profile: {str(e)}', 'error')
+    
+    return render_template('teacher/profile.html')
