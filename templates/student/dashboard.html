@@ -11,47 +11,14 @@
         <div class="container">
             <a class="navbar-brand" href="#">USOS Student</a>
             <div class="navbar-nav">
+                <a class="nav-link" href="{{ url_for('student.messages') }}">Messages</a>
                 <a class="nav-link" href="{{ url_for('student.view_grades') }}">My Grades</a>
-                <a class="nav-link" href="{{ url_for('student.messages') }}">
-                    Messages
-                    {% if unread_messages %}
-                    <span class="badge bg-danger">{{ unread_messages }}</span>
-                    {% endif %}
-                </a>
                 <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
             </div>
         </div>
     </nav>
 
     <div class="container mt-4">
-        <!-- Notifications Section -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header bg-info text-white">
-                        <h5 class="card-title mb-0">Notifications</h5>
-                    </div>
-                    <div class="card-body">
-                        {% if notifications %}
-                            <div class="list-group">
-                            {% for notification in notifications %}
-                                <div class="list-group-item {% if not notification.read %}bg-light{% endif %}">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">{{ notification.title }}</h6>
-                                        <small>{{ notification.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
-                                    </div>
-                                    <p class="mb-1">{{ notification.message }}</p>
-                                </div>
-                            {% endfor %}
-                            </div>
-                        {% else %}
-                            <p class="text-muted">No notifications</p>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Active Assignments Section -->
         <div class="row mb-4">
             <div class="col-12">

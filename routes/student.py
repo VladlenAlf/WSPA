@@ -146,12 +146,19 @@ def course_materials(course_id):
     ).first()
     
     if not enrollment:
-        flash('You are not enrolled in this course.')
+        flash('You are not enrolled in this course.', 'error')
         return redirect(url_for('student.dashboard'))
     
     course = Course.query.get_or_404(course_id)
-    materials = Material.query.filter_by(course_id=course_id).order_by(Material.uploaded_at.desc()).all()
-    return render_template('student/course_materials.html', course=course, materials=materials)
+    assignments = Assignment.query.filter_by(course_id=course_id).order_by(Assignment.due_date.desc()).all()
+    
+    # Получаем статус заданий (сдано/не сдано)
+    submissions = {s.assignment_id: s for s in Submission.query.filter_by(student_id=current_user.id).all()}
+    
+    return render_template('student/course_materials.html', 
+                         course=course,
+                         assignments=assignments,
+                         submissions=submissions)
 
 @student.route('/student/material/<int:material_id>/download')
 @login_required
@@ -179,17 +186,30 @@ def download_material(material_id):
 @login_required
 @student_required
 def messages():
+    # Получаем всех учителей из курсов студента
     course_teachers = db.session.query(User).join(Course, Course.teacher_id == User.id)\
         .join(CourseEnrollment, CourseEnrollment.course_id == Course.id)\
-        .filter(CourseEnrollment.student_id == current_user.id).all()
+        .filter(CourseEnrollment.student_id == current_user.id).distinct().all()
     
-    return render_template('student/messages.html', teachers=course_teachers)
+    # Получаем все сообщения
+    messages = Message.query.filter_by(receiver_id=current_user.id).all()
+    
+    return render_template('student/messages.html', 
+                         teachers=course_teachers,
+                         messages=messages)
 
 @student.route('/student/chat/<int:teacher_id>', methods=['GET', 'POST'])
 @login_required
 @student_required
 def chat_with_teacher(teacher_id):
     teacher = User.query.get_or_404(teacher_id)
+    
+    # Отмечаем сообщения как прочитанные при входе в чат
+    Message.query.filter_by(
+        sender_id=teacher_id,
+        receiver_id=current_user.id,
+        read=False
+    ).update({Message.read: True})
     
     if request.method == 'POST':
         content = request.form.get('message')
@@ -200,14 +220,17 @@ def chat_with_teacher(teacher_id):
                 content=content
             )
             db.session.add(message)
-            db.session.commit()
+    
+    db.session.commit()  # Сохраняем изменения статуса прочтения и новые сообщения
     
     messages = Message.query.filter(
         ((Message.sender_id == current_user.id) & (Message.receiver_id == teacher_id)) |
         ((Message.sender_id == teacher_id) & (Message.receiver_id == current_user.id))
     ).order_by(Message.created_at).all()
     
-    return render_template('student/chat.html', other_user=teacher, messages=messages)
+    return render_template('student/chat.html', 
+                         other_user=teacher, 
+                         messages=messages)
 
 @student.route('/student/chat/<int:user_id>', methods=['GET', 'POST'])
 @login_required
