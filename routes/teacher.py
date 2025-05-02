@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, send_from_directory, current_app
 from flask_login import login_required, current_user
 from functools import wraps
-from models import db, Course, Assignment, Submission, Material, User
+from models import db, Course, Assignment, Submission, Material, User, Message, CourseEnrollment
 from datetime import datetime
 from werkzeug.utils import secure_filename
 import os
@@ -224,3 +224,59 @@ def download_submission_file(submission_id):
         )
     flash('No file attached to this submission', 'error')
     return redirect(url_for('teacher.view_submission', submission_id=submission_id))
+
+@teacher.route('/teacher/messages')
+@login_required
+@teacher_required
+def messages():
+    course_students = db.session.query(User).join(CourseEnrollment)\
+        .join(Course, Course.id == CourseEnrollment.course_id)\
+        .filter(Course.teacher_id == current_user.id).distinct().all()
+    
+    # Получаем все непрочитанные сообщения для учителя
+    unread_messages = Message.query.filter_by(
+        receiver_id=current_user.id,
+        read=False
+    ).count()
+    
+    messages = Message.query.filter_by(receiver_id=current_user.id).all()
+    
+    return render_template('teacher/messages.html', 
+                         students=course_students,
+                         messages=messages,
+                         unread_messages=unread_messages)
+
+@teacher.route('/teacher/chat/<int:student_id>', methods=['GET', 'POST'])
+@login_required
+@teacher_required
+def chat_with_student(student_id):
+    student = User.query.get_or_404(student_id)
+    
+    # Отмечаем сообщения как прочитанные
+    Message.query.filter_by(
+        sender_id=student_id,
+        receiver_id=current_user.id,
+        read=False
+    ).update({Message.read: True})
+    
+    if request.method == 'POST':
+        content = request.form.get('message')
+        if content:
+            message = Message(
+                sender_id=current_user.id,
+                receiver_id=student_id,
+                content=content
+            )
+            db.session.add(message)
+    
+    db.session.commit()
+    
+    messages = Message.query.filter(
+        ((Message.sender_id == current_user.id) & (Message.receiver_id == student_id)) |
+        ((Message.sender_id == student_id) & (Message.receiver_id == current_user.id))
+    ).order_by(Message.created_at).all()
+    
+    return render_template('teacher/chat.html', 
+                         other_user=student, 
+                         messages=messages,
+                         unread_messages=0)  # В чате все сообщения считаются прочитанными

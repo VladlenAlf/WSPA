@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from functools import wraps
-from models import db, User, Course, SystemLog, CourseEnrollment
+from models import db, User, Course, SystemLog, CourseEnrollment, Assignment, Submission, Message
 
 admin = Blueprint('admin', __name__)
 
@@ -80,6 +80,54 @@ def edit_user(user_id):
         return redirect(url_for('admin.dashboard'))
         
     return render_template('admin/edit_user.html', user=user)
+
+@admin.route('/admin/user/<int:user_id>/delete', methods=['POST'])
+@login_required
+@admin_required
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    
+    # Prevent deleting self or other admins
+    if user.id == current_user.id or user.role == 'admin':
+        flash('Cannot delete admin users!', 'error')
+        return redirect(url_for('admin.dashboard'))
+    
+    try:
+        # Если это учитель, проверяем и удаляем связанные курсы
+        if user.role == 'teacher':
+            courses = Course.query.filter_by(teacher_id=user.id).all()
+            for course in courses:
+                # Удаляем все записи о регистрации на курс
+                CourseEnrollment.query.filter_by(course_id=course.id).delete()
+                # Получаем все задания курса
+                assignments = Assignment.query.filter_by(course_id=course.id).all()
+                for assignment in assignments:
+                    # Удаляем все решения для каждого задания
+                    Submission.query.filter_by(assignment_id=assignment.id).delete()
+                    db.session.delete(assignment)
+                db.session.delete(course)
+        
+        # Если это студент, удаляем его регистрации и решения
+        if user.role == 'student':
+            # Удаляем все регистрации на курсы
+            CourseEnrollment.query.filter_by(student_id=user.id).delete()
+            # Удаляем все решения заданий
+            Submission.query.filter_by(student_id=user.id).delete()
+        
+        # Удаляем все сообщения пользователя
+        Message.query.filter((Message.sender_id == user.id) | 
+                           (Message.receiver_id == user.id)).delete()
+        
+        # Наконец, удаляем самого пользователя
+        db.session.delete(user)
+        db.session.commit()
+        
+        flash(f'User {user.username} and all related data deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting user: {str(e)}', 'error')
+    
+    return redirect(url_for('admin.dashboard'))
 
 @admin.route('/admin/courses')
 @login_required

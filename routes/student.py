@@ -179,13 +179,35 @@ def download_material(material_id):
 @login_required
 @student_required
 def messages():
-    chats = db.session.query(User).join(Message, 
-        (Message.sender_id == User.id) | (Message.receiver_id == User.id)
-    ).filter(
-        (Message.sender_id == current_user.id) | (Message.receiver_id == current_user.id)
-    ).distinct().all()
+    course_teachers = db.session.query(User).join(Course, Course.teacher_id == User.id)\
+        .join(CourseEnrollment, CourseEnrollment.course_id == Course.id)\
+        .filter(CourseEnrollment.student_id == current_user.id).all()
     
-    return render_template('student/messages.html', chats=chats)
+    return render_template('student/messages.html', teachers=course_teachers)
+
+@student.route('/student/chat/<int:teacher_id>', methods=['GET', 'POST'])
+@login_required
+@student_required
+def chat_with_teacher(teacher_id):
+    teacher = User.query.get_or_404(teacher_id)
+    
+    if request.method == 'POST':
+        content = request.form.get('message')
+        if content:
+            message = Message(
+                sender_id=current_user.id,
+                receiver_id=teacher_id,
+                content=content
+            )
+            db.session.add(message)
+            db.session.commit()
+    
+    messages = Message.query.filter(
+        ((Message.sender_id == current_user.id) & (Message.receiver_id == teacher_id)) |
+        ((Message.sender_id == teacher_id) & (Message.receiver_id == current_user.id))
+    ).order_by(Message.created_at).all()
+    
+    return render_template('student/chat.html', other_user=teacher, messages=messages)
 
 @student.route('/student/chat/<int:user_id>', methods=['GET', 'POST'])
 @login_required

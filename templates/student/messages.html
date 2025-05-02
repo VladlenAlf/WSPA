@@ -1,0 +1,17 @@
+{% extends "student/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Messages with Teachers</h2>
+    <div class="list-group mt-3">
+        {% for teacher in teachers %}
+        <a href="{{ url_for('student.chat_with_teacher', teacher_id=teacher.id) }}" 
+           class="list-group-item list-group-item-action">
+            {{ teacher.full_name }} ({{ teacher.email }})
+        </a>
+        {% else %}
+        <p class="text-muted">No teachers available for chat.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

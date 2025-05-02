@@ -113,6 +113,10 @@ class Message(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     read = db.Column(db.Boolean, default=False)
 
+    __table_args__ = (
+        db.Index('idx_messages_users', 'sender_id', 'receiver_id'),
+    )
+
 class SystemLog(db.Model):
     __tablename__ = 'system_logs'
     
