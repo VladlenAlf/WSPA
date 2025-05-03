@@ -73,7 +73,7 @@ class Assignment(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
-    file_path = db.Column(db.String(200))  # Add this line
+    file_path = db.Column(db.String(200))  # Just keep this, remove file_name
     due_date = db.Column(db.DateTime, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     

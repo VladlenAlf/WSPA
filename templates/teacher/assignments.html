@@ -1,6 +1,6 @@
 {% extends "teacher/base.html" %}
 
-{% block title %}Course Assignments - USOS Teacher{% endblock %}
+{% block title %}Zadania Kursu - USOS Teacher{% endblock %}
 
 {% block content %}
 <div class="card">
@@ -11,29 +11,29 @@
         <!-- Create Assignment Form -->
         <div class="card mb-4">
             <div class="card-header">
-                <h5 class="mb-0">Create New Assignment</h5>
+                <h5 class="mb-0">Utwórz Nowe Zadanie</h5>
             </div>
             <div class="card-body">
                 <form method="POST" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="title" class="form-label">Title</label>
+                            <label for="title" class="form-label">Tytuł</label>
                             <input type="text" class="form-control" id="title" name="title" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="due_date" class="form-label">Due Date</label>
+                            <label for="due_date" class="form-label">Termin</label>
                             <input type="datetime-local" class="form-control" id="due_date" name="due_date" required>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
+                        <label for="description" class="form-label">Opis</label>
                         <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="assignment_file" class="form-label">Assignment File (optional)</label>
+                        <label for="assignment_file" class="form-label">Plik Zadania (opcjonalnie)</label>
                         <input type="file" class="form-control" id="assignment_file" name="assignment_file">
                     </div>
-                    <button type="submit" class="btn btn-primary">Create Assignment</button>
+                    <button type="submit" class="btn btn-primary">Utwórz Zadanie</button>
                 </form>
             </div>
         </div>
@@ -41,7 +41,7 @@
         <!-- Assignments List -->
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0">Existing Assignments</h5>
+                <h5 class="mb-0">Istniejące Zadania</h5>
             </div>
             <div class="card-body">
                 {% if assignments %}
@@ -49,10 +49,10 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Title</th>
-                                <th>Due Date</th>
-                                <th>Submissions</th>
-                                <th>Actions</th>
+                                <th>Tytuł</th>
+                                <th>Termin</th>
+                                <th>Złożone Zadania</th>
+                                <th>Akcje</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -62,15 +62,15 @@
                                 <td>{{ assignment.due_date.strftime('%Y-%m-%d %H:%M') }}</td>
                                 <td>
                                     <span class="badge bg-info">
-                                        {{ assignment.submissions|length }} submissions
+                                        {{ assignment.submissions|length }} Złożone Zadania
                                     </span>
                                 </td>
                                 <td>
                                     <a href="{{ url_for('teacher.view_submissions', assignment_id=assignment.id) }}" 
-                                       class="btn btn-sm btn-primary">View Submissions</a>
+                                       class="btn btn-sm btn-primary">Zobacz Złożone Zadania</a>
                                     {% if assignment.file_path %}
                                     <a href="{{ url_for('teacher.download_assignment_file', assignment_id=assignment.id) }}" 
-                                       class="btn btn-sm btn-secondary">Download File</a>
+                                       class="btn btn-sm btn-secondary">Pobierz Plik</a>
                                     {% endif %}
                                 </td>
                             </tr>
@@ -79,13 +79,13 @@
                     </table>
                 </div>
                 {% else %}
-                <p class="text-muted">No assignments created yet.</p>
+                <p class="text-muted">Brak utworzonych zadań.</p>
                 {% endif %}
             </div>
         </div>
     </div>
     <div class="card-footer">
-        <a href="{{ url_for('teacher.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+        <a href="{{ url_for('teacher.dashboard') }}" class="btn btn-secondary">Powrót do Pulpitu</a>
     </div>
 </div>
 {% endblock %}

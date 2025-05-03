@@ -5,7 +5,7 @@
 {% block content %}
 <div class="row mb-4">
     <div class="col-12">
-        <h2>My Courses</h2>
+        <h2>Moje Kursy</h2>
         <div class="row">
             {% for course in courses %}
             <div class="col-md-4 mb-3">
@@ -13,7 +13,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ course.name }}</h5>
                         <a href="{{ url_for('teacher.manage_assignments', course_id=course.id) }}" 
-                           class="btn btn-primary">Manage Assignments</a>
+                           class="btn btn-primary">Zarządzaj Zadaniami</a>
                     </div>
                 </div>
             </div>
@@ -26,7 +26,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0">Recent Submissions</h5>
+                <h5 class="mb-0">Ostatnie Prace</h5>
             </div>
             <div class="card-body">
                 {% if recent_submissions %}
@@ -39,13 +39,13 @@
                                 <small class="text-muted">{{ submission.assignment.title }}</small>
                             </div>
                             <a href="{{ url_for('teacher.view_submission', submission_id=submission.id) }}" 
-                               class="btn btn-sm btn-primary">View & Grade</a>
+                               class="btn btn-sm btn-primary">Zobacz & Oceń</a>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
                 {% else %}
-                <p class="text-muted">No recent submissions</p>
+                <p class="text-muted">Brak ostatnich prac</p>
                 {% endif %}
             </div>
         </div>

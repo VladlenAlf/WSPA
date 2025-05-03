@@ -1,6 +1,6 @@
 {% extends "student/base.html" %}
 
-{% block title %}View Assignment - USOS{% endblock %}
+{% block title %}Zobacz Zadanie - USOS{% endblock %}
 
 {% block content %}
 <div class="card">
@@ -12,19 +12,19 @@
             <div class="row">
                 <div class="col-md-8">
                     <!-- Assignment Description -->
-                    <h5>Description:</h5>
+                    <h5>Opis:</h5>
                     <p>{{ assignment.description }}</p>
                     
                     <!-- Due Date -->
-                    <p><strong>Due Date:</strong> {{ assignment.due_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                    <p><strong>Termin:</strong> {{ assignment.due_date.strftime('%Y-%m-%d %H:%M') }}</p>
                     
                     <!-- Assignment File -->
                     {% if assignment.file_path %}
                     <div class="mb-3">
-                        <h5>Assignment Materials:</h5>
+                        <h5>Materiały do Zadania:</h5>
                         <a href="{{ url_for('student.download_assignment_file', assignment_id=assignment.id) }}" 
                            class="btn btn-primary">
-                            <i class="fas fa-download"></i> Download Assignment File
+                            <i class="fas fa-download"></i> Pobierz Plik Zadania
                         </a>
                     </div>
                     {% endif %}
@@ -34,22 +34,22 @@
                     <!-- Submission Status -->
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="mb-0">Submission Status</h5>
+                            <h5 class="mb-0">Status Złożenia</h5>
                         </div>
                         <div class="card-body">
                             {% if submission %}
-                                <p class="text-success">Submitted</p>
-                                <p>Submitted on: {{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                                <p class="text-success">Złożono</p>
+                                <p>Złożono dnia: {{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') }}</p>
                                 {% if submission.grade %}
-                                    <p>Grade: {{ submission.grade }}</p>
-                                    <p>Feedback: {{ submission.feedback or 'No feedback provided' }}</p>
+                                    <p>Ocena: {{ submission.grade }}</p>
+                                    <p>Opinia: {{ submission.feedback or 'Brak opinii' }}</p>
                                 {% else %}
-                                    <p class="text-warning">Not graded yet</p>
+                                    <p class="text-warning">Nie oceniono jeszcze</p>
                                 {% endif %}
                             {% else %}
-                                <p class="text-danger">Not submitted yet</p>
+                                <p class="text-danger">Nie złożono jeszcze</p>
                                 <a href="{{ url_for('student.submit_assignment', assignment_id=assignment.id) }}" 
-                                   class="btn btn-primary">Submit Assignment</a>
+                                   class="btn btn-primary">Złóż Zadanie</a>
                             {% endif %}
                         </div>
                     </div>

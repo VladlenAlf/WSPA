@@ -8,12 +8,12 @@
 </head>
 <body>
     <div class="container mt-4">
-        <h2>Edit User</h2>
+        <h2>Edytuj użytkownika</h2>
         <div class="card">
             <div class="card-body">
                 <form method="POST">
                     <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
+                        <label for="username" class="form-label">Nazwa użytkownika</label>
                         <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
                     </div>
                     <div class="mb-3">
@@ -21,23 +21,23 @@
                         <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
                     </div>
                     <div class="mb-3">
-                        <label for="full_name" class="form-label">Full Name</label>
+                        <label for="full_name" class="form-label">Pełne imię i nazwisko</label>
                         <input type="text" class="form-control" id="full_name" name="full_name" value="{{ user.full_name }}" required>
                     </div>
                     <div class="mb-3">
-                        <label for="role" class="form-label">Role</label>
+                        <label for="role" class="form-label">Rola</label>
                         <select class="form-control" id="role" name="role" required>
                             <option value="student" {% if user.role == 'student' %}selected{% endif %}>Student</option>
-                            <option value="teacher" {% if user.role == 'teacher' %}selected{% endif %}>Teacher</option>
-                            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                            <option value="teacher" {% if user.role == 'teacher' %}selected{% endif %}>Wykładowca</option>
+                            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Administrator</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">New Password (leave blank to keep current)</label>
+                        <label for="password" class="form-label">Nowe hasło (pozostaw puste, aby zachować obecne)</label>
                         <input type="password" class="form-control" id="password" name="password">
                     </div>
-                    <button type="submit" class="btn btn-primary">Update User</button>
-                    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Aktualizuj użytkownika</button>
+                    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Anuluj</a>
                 </form>
             </div>
         </div>

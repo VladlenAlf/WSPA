@@ -5,7 +5,7 @@
 {% block content %}
 <div class="card">
     <div class="card-header">
-        <h3 class="mb-0">Submissions for: {{ assignment.title }}</h3>
+        <h3 class="mb-0">Zgłoszenia dla: {{ assignment.title }}</h3>
         <small class="text-muted">{{ assignment.course.name }}</small>
     </div>
     <div class="card-body">
@@ -15,10 +15,10 @@
                 <thead>
                     <tr>
                         <th>Student</th>
-                        <th>Submitted At</th>
+                        <th>Złożono</th>
                         <th>Status</th>
-                        <th>Grade</th>
-                        <th>Actions</th>
+                        <th>Ocena</th>
+                        <th>Akcje</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,9 +28,9 @@
                         <td>{{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') }}</td>
                         <td>
                             {% if submission.grade %}
-                                <span class="badge bg-success">Graded</span>
+                                <span class="badge bg-success">Ocenione</span>
                             {% else %}
-                                <span class="badge bg-warning">Pending</span>
+                                <span class="badge bg-warning">Oczekujące</span>
                             {% endif %}
                         </td>
                         <td>{{ submission.grade or '-' }}</td>
@@ -44,12 +44,12 @@
             </table>
         </div>
         {% else %}
-        <p class="text-muted">No submissions yet.</p>
+        <p class="text-muted">Brak zgłoszeń.</p>
         {% endif %}
     </div>
     <div class="card-footer">
         <a href="{{ url_for('teacher.manage_assignments', course_id=assignment.course_id) }}" 
-           class="btn btn-secondary">Back to Assignments</a>
+           class="btn btn-secondary">Powrót do Zadań</a>
     </div>
 </div>
 {% endblock %}

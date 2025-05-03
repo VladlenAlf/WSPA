@@ -5,35 +5,35 @@
 {% block content %}
 <div class="card">
     <div class="card-header">
-        <h3 class="mb-0">Submit Assignment: {{ assignment.title }}</h3>
+        <h3 class="mb-0">Złóż Zadanie: {{ assignment.title }}</h3>
     </div>
     <div class="card-body">
         <div class="mb-4">
-            <h5>Assignment Description:</h5>
+            <h5>Opis Zadania:</h5>
             <p>{{ assignment.description }}</p>
-            <p><strong>Due Date:</strong> {{ assignment.due_date.strftime('%Y-%m-%d %H:%M') }}</p>
+            <p><strong>Termin:</strong> {{ assignment.due_date.strftime('%Y-%m-%d %H:%M') }}</p>
             {% if assignment.file_path %}
             <a href="{{ url_for('student.download_assignment_file', assignment_id=assignment.id) }}" 
                class="btn btn-secondary mb-3">
-                <i class="fas fa-download me-2"></i>Download Assignment File
+                <i class="fas fa-download me-2"></i>Pobierz Plik Zadania
             </a>
             {% endif %}
         </div>
 
         <form method="POST" enctype="multipart/form-data">
             <div class="mb-3">
-                <label for="content" class="form-label">Your Answer</label>
+                <label for="content" class="form-label">Twoja Odpowiedź</label>
                 <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
             </div>
             
             <div class="mb-3">
-                <label for="submission_file" class="form-label">Your Solution File (optional)</label>
+                <label for="submission_file" class="form-label">Plik Rozwiązania (opcjonalnie)</label>
                 <input type="file" class="form-control" id="submission_file" name="submission_file">
             </div>
             
             <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary">Submit Assignment</button>
-                <a href="{{ url_for('student.dashboard') }}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Złóż Zadanie</button>
+                <a href="{{ url_for('student.dashboard') }}" class="btn btn-secondary">Anuluj</a>
             </div>
         </form>
     </div>

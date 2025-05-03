@@ -5,11 +5,11 @@
 {% block content %}
 <div class="card">
     <div class="card-header">
-        <h3>{{ course.name }} - Materials</h3>
+        <h3>{{ course.name }} - Materiały</h3>
     </div>
     <div class="card-body">
         <div class="container mt-4">
-            <h2>{{ course.name }} - Assignments</h2>
+            <h2>{{ course.name }} - Zadania</h2>
             
             {% if assignments %}
                 <div class="list-group mt-4">
@@ -23,32 +23,32 @@
                             
                             {% if assignment.file_path %}
                                 <a href="{{ url_for('student.download_assignment_file', assignment_id=assignment.id) }}" 
-                                   class="btn btn-sm btn-secondary">Download Assignment File</a>
+                                   class="btn btn-sm btn-secondary">Pobierz plik zadania</a>
                             {% endif %}
                             
                             {% if assignment.id in submissions %}
                                 {% set submission = submissions[assignment.id] %}
                                 <div class="mt-2">
-                                    <span class="badge bg-success">Submitted</span>
+                                    <span class="badge bg-success">Złożone</span>
                                     {% if submission.grade %}
                                         <span class="badge bg-info">Grade: {{ submission.grade }}</span>
                                     {% endif %}
                                 </div>
                             {% else %}
                                 <a href="{{ url_for('student.submit_assignment', assignment_id=assignment.id) }}" 
-                                   class="btn btn-sm btn-primary mt-2">Submit Solution</a>
+                                   class="btn btn-sm btn-primary mt-2">Prześlij rozwiązanie</a>
                             {% endif %}
                         </div>
                     {% endfor %}
                 </div>
             {% else %}
                 <div class="alert alert-info mt-4">
-                    No assignments available for this course yet.
+                    Brak zadań dostępnych w tym kursie.
                 </div>
             {% endif %}
             
             <div class="mt-3">
-                <a href="{{ url_for('student.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+                <a href="{{ url_for('student.dashboard') }}" class="btn btn-secondary">Powrót do Kokpitu</a>
             </div>
         </div>
     </div>

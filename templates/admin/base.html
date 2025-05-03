@@ -48,36 +48,36 @@
                         <li class="nav-item">
                             <a class="nav-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}" 
                                href="{{ url_for('admin.dashboard') }}">
-                                <i class="fas fa-home me-2"></i> Dashboard
+                                <i class="fas fa-home me-2"></i> Panel
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if request.endpoint == 'admin.manage_courses' %}active{% endif %}" 
                                href="{{ url_for('admin.manage_courses') }}">
-                                <i class="fas fa-book me-2"></i> Courses
+                                <i class="fas fa-book me-2"></i> Kursy
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if request.endpoint == 'admin.create_user' %}active{% endif %}" 
                                href="{{ url_for('admin.create_user') }}">
-                                <i class="fas fa-user-plus me-2"></i> Create User
+                                <i class="fas fa-user-plus me-2"></i> Utwórz użytkownika
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if request.endpoint == 'admin.view_logs' %}active{% endif %}" 
                                href="{{ url_for('admin.view_logs') }}">
-                                <i class="fas fa-list me-2"></i> System Logs
+                                <i class="fas fa-list me-2"></i> Dzienniki systemowe
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if request.endpoint == 'admin.analytics' %}active{% endif %}" 
                                href="{{ url_for('admin.analytics') }}">
-                                <i class="fas fa-chart-line me-2"></i> Analytics
+                                <i class="fas fa-chart-line me-2"></i> Analiza
                             </a>
                         </li>
                         <li class="nav-item mt-4">
                             <a class="nav-link" href="{{ url_for('logout') }}">
-                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                <i class="fas fa-sign-out-alt me-2"></i> Wyloguj się
                             </a>
                         </li>
                     </ul>

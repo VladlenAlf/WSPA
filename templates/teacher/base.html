@@ -50,7 +50,7 @@
                     <div class="text-center mb-4">
                         <i class="fas fa-chalkboard-teacher fa-2x text-white mb-2"></i>
                         <h5 class="text-white">{{ current_user.full_name }}</h5>
-                        <small class="text-white-50">Teacher</small>
+                        <small class="text-white-50">Wykładowca</small>
                     </div>
                     <ul class="nav flex-column">
                         <li class="nav-item">
@@ -62,24 +62,24 @@
                         <li class="nav-item">
                             <a class="nav-link {% if request.endpoint == 'teacher.messages' %}active{% endif %}" 
                                href="{{ url_for('teacher.messages') }}">
-                                <i class="fas fa-envelope me-2"></i> Messages
+                                <i class="fas fa-envelope me-2"></i> Wiadomości
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if request.endpoint == 'teacher.course_statistics' %}active{% endif %}" 
                                href="{{ url_for('teacher.course_statistics') }}">
-                                <i class="fas fa-chart-line me-2"></i> Statistics
+                                <i class="fas fa-chart-line me-2"></i> Statystyki
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if request.endpoint == 'teacher.profile' %}active{% endif %}" 
                                href="{{ url_for('teacher.profile') }}">
-                                <i class="fas fa-user-cog me-2"></i> My Profile
+                                <i class="fas fa-user-cog me-2"></i> Mój Profil
                             </a>
                         </li>
                         <li class="nav-item mt-4">
                             <a class="nav-link" href="{{ url_for('logout') }}">
-                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                <i class="fas fa-sign-out-alt me-2"></i> Wyloguj się
                             </a>
                         </li>
                     </ul>

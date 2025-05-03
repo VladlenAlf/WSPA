@@ -92,7 +92,7 @@
                 <div class="login-card mx-auto">
                     <div class="logo-container">
                         <img src="{{ url_for('static', filename='assets/USOS_logo.png') }}" alt="USOS Logo" class="img-fluid">
-                        <h4 class="text-muted mb-0">Welcome Back</h4>
+                        <h4 class="text-muted mb-0">Witaj ponownie</h4>
                     </div>
                     
                     {% with messages = get_flashed_messages() %}
@@ -112,17 +112,17 @@
                                 <i class="fas fa-user"></i>
                             </span>
                             <input type="text" class="form-control" id="username" name="username" 
-                                   placeholder="Enter your username" required>
+                                   placeholder="Wprowadź swoją nazwę użytkownika" required>
                         </div>
                         <div class="input-group mb-4">
                             <span class="input-group-text">
                                 <i class="fas fa-lock"></i>
                             </span>
                             <input type="password" class="form-control" id="password" name="password" 
-                                   placeholder="Enter your password" required>
+                                   placeholder="Wprowadź swoje hasło" required>
                         </div>
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                            <i class="fas fa-sign-in-alt me-2"></i>Zaloguj się
                         </button>
                     </form>
                 </div>

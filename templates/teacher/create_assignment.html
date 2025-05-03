@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Create New Assignment for {{ course.name }}</h2>
+    <h2>Utwórz Nowe Zadanie dla kursu {{ course.name }}</h2>
     
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -16,28 +16,28 @@
         <div class="card-body">
             <form method="POST" enctype="multipart/form-data">
                 <div class="mb-3">
-                    <label for="title" class="form-label">Title</label>
+                    <label for="title" class="form-label">Tytuł</label>
                     <input type="text" class="form-control" id="title" name="title" required>
                 </div>
                 
                 <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
+                    <label for="description" class="form-label">Opis</label>
                     <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                 </div>
                 
                 <div class="mb-3">
-                    <label for="assignment_file" class="form-label">Assignment File</label>
+                    <label for="assignment_file" class="form-label">Plik Zadania</label>
                     <input type="file" class="form-control" id="assignment_file" name="assignment_file">
                 </div>
                 
                 <div class="mb-3">
-                    <label for="due_date" class="form-label">Due Date</label>
+                    <label for="due_date" class="form-label">Termin Oddania</label>
                     <input type="datetime-local" class="form-control" id="due_date" name="due_date" required>
                 </div>
                 
-                <button type="submit" class="btn btn-primary">Create Assignment</button>
+                <button type="submit" class="btn btn-primary">Utwórz Zadanie</button>
                 <a href="{{ url_for('teacher.manage_assignments', course_id=course.id) }}" 
-                   class="btn btn-secondary">Cancel</a>
+                   class="btn btn-secondary">Anuluj</a>
             </form>
         </div>
     </div>

@@ -1,11 +1,11 @@
 {% extends "teacher/base.html" %}
 
-{% block title %}Messages - USOS Teacher{% endblock %}
+{% block title %}Wiadomości - USOS Wykładowca{% endblock %}
 
 {% block content %}
 <div class="card">
     <div class="card-header">
-        <h3 class="mb-0">Messages with Students</h3>
+        <h3 class="mb-0">Wiadomości ze Studentami</h3>
     </div>
     <div class="card-body">
         {% if students %}
@@ -19,13 +19,13 @@
                             <small class="text-muted">{{ student.email }}</small>
                         </div>
                         {% if unread > 0 %}
-                            <span class="badge bg-danger rounded-pill">{{ unread }} new</span>
+                            <span class="badge bg-danger rounded-pill">{{ unread }} nowe</span>
                         {% endif %}
                     </a>
                 {% endfor %}
             </div>
         {% else %}
-            <p class="text-muted">No students available for chat.</p>
+            <p class="text-muted">Brak studentów dostępnych do czatu.</p>
         {% endif %}
     </div>
 </div>

@@ -48,30 +48,30 @@
                         <li class="nav-item">
                             <a class="nav-link {% if request.endpoint == 'student.dashboard' %}active{% endif %}" 
                                href="{{ url_for('student.dashboard') }}">
-                                <i class="fas fa-home me-2"></i> Dashboard
+                                <i class="fas fa-home me-2"></i> Pulpit
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if request.endpoint == 'student.messages' %}active{% endif %}" 
                                href="{{ url_for('student.messages') }}">
-                                <i class="fas fa-envelope me-2"></i> Messages
+                                <i class="fas fa-envelope me-2"></i> Wiadomości
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if request.endpoint == 'student.view_grades' %}active{% endif %}" 
                                href="{{ url_for('student.view_grades') }}">
-                                <i class="fas fa-chart-bar me-2"></i> My Grades
+                                <i class="fas fa-chart-bar me-2"></i> Moje Oceny
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if request.endpoint == 'student.profile' %}active{% endif %}" 
                                href="{{ url_for('student.profile') }}">
-                                <i class="fas fa-user-cog me-2"></i> My Profile
+                                <i class="fas fa-user-cog me-2"></i> Mój Profil
                             </a>
                         </li>
                         <li class="nav-item mt-4">
                             <a class="nav-link" href="{{ url_for('logout') }}">
-                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                <i class="fas fa-sign-out-alt me-2"></i> Wyloguj się
                             </a>
                         </li>
                     </ul>

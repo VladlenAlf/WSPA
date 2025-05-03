@@ -5,7 +5,7 @@
 {% block content %}
 <div class="row">
     <div class="col-12">
-        <h2 class="mb-4">Course Statistics</h2>
+        <h2 class="mb-4">Statystyki Kursu</h2>
         
         <div class="row">
             {% for stat in statistics %}
@@ -18,7 +18,7 @@
                         <div class="row g-0">
                             <div class="col-6 border-end p-3">
                                 <h3 class="text-center text-success mb-0">{{ stat.average_grade }}</h3>
-                                <p class="text-center text-muted mb-0">Average Grade</p>
+                                <p class="text-center text-muted mb-0">Średnia Ocena</p>
                             </div>
                             <div class="col-6 p-3">
                                 <h3 class="text-center text-primary mb-0">{{ stat.graded_students }}/{{ stat.total_students }}</h3>
@@ -27,7 +27,7 @@
                         </div>
                         <hr>
                         <p class="text-muted mb-0">
-                            Total submissions: {{ stat.submissions_count }}
+                            Łączna liczba zgłoszeń: {{ stat.submissions_count }}
                         </p>
                     </div>
                 </div>

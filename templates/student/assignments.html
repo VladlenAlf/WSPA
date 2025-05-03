@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Course Assignments</h2>
+    <h2>Zadania Kursu</h2>
     {% for assignment in assignments %}
         <div class="card mb-3">
             <div class="card-header">
@@ -10,12 +10,12 @@
             </div>
             <div class="card-body">
                 <p>{{ assignment.description }}</p>
-                <p><strong>Due Date:</strong> {{ assignment.due_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                <p><strong>Termin:</strong> {{ assignment.due_date.strftime('%Y-%m-%d %H:%M') }}</p>
                 
                 {% if assignment.file_path %}
                     <a href="{{ url_for('teacher.download_assignment_file', assignment_id=assignment.id) }}" 
                        class="btn btn-primary btn-sm">
-                        Download Assignment File
+                       Pobierz plik zadania
                     </a>
                 {% endif %}
             </div>

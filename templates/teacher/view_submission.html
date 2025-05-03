@@ -6,26 +6,26 @@
 <div class="container mt-4">
     <div class="card">
         <div class="card-header bg-primary text-white">
-            <h3 class="mb-0">Student Submission Details</h3>
+            <h3 class="mb-0">Szczegóły zgłoszenia studenta</h3>
         </div>
         <div class="card-body">
             <!-- Student and Assignment Info -->
             <div class="row mb-4">
                 <div class="col-md-6">
-                    <h5>Student Information</h5>
-                    <p><strong>Name:</strong> {{ student.full_name }}</p>
-                    <p><strong>Submitted:</strong> {{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                    <h5>Informacje o studencie</h5>
+                    <p><strong>Imię:</strong> {{ student.full_name }}</p>
+                    <p><strong>Złożono:</strong> {{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') }}</p>
                 </div>
                 <div class="col-md-6">
-                    <h5>Assignment Information</h5>
-                    <p><strong>Title:</strong> {{ submission.assignment.title }}</p>
-                    <p><strong>Due Date:</strong> {{ submission.assignment.due_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                    <h5>Informacje o zadaniu</h5>
+                    <p><strong>Tytuł:</strong> {{ submission.assignment.title }}</p>
+                    <p><strong>Termin:</strong> {{ submission.assignment.due_date.strftime('%Y-%m-%d %H:%M') }}</p>
                 </div>
             </div>
 
             <!-- Submission Content -->
             <div class="mb-4">
-                <h5>Student's Answer:</h5>
+                <h5>Odpowiedź studenta:</h5>
                 <div class="card">
                     <div class="card-body bg-light">
                         {{ submission.content }}
@@ -36,30 +36,30 @@
             <!-- Attached File -->
             {% if submission.file_path %}
             <div class="mb-4">
-                <h5>Attached File:</h5>
+                <h5>Załączony plik:</h5>
                 <a href="{{ url_for('teacher.download_submission_file', submission_id=submission.id) }}" 
                    class="btn btn-primary">
-                    <i class="fas fa-download"></i> Download Student's File
+                    <i class="fas fa-download"></i> Pobierz plik studenta
                 </a>
             </div>
             {% endif %}
 
             <!-- Grading Section -->
             <div class="mt-4">
-                <h5>Grade Submission</h5>
+                <h5>Ocena zgłoszenia</h5>
                 <form method="POST" action="{{ url_for('teacher.grade_submission', submission_id=submission.id) }}">
                     <div class="mb-3">
-                        <label for="grade" class="form-label">Grade (0-100)</label>
+                        <label for="grade" class="form-label">Ocena (0-100)</label>
                         <input type="number" class="form-control" id="grade" name="grade" 
                                min="0" max="100" value="{{ submission.grade or '' }}" required>
                     </div>
                     <div class="mb-3">
-                        <label for="feedback" class="form-label">Feedback</label>
+                        <label for="feedback" class="form-label">Komentarz</label>
                         <textarea class="form-control" id="feedback" name="feedback" 
                                   rows="3">{{ submission.feedback or '' }}</textarea>
                     </div>
-                    <button type="submit" class="btn btn-success">Submit Grade</button>
-                    <a href="{{ url_for('teacher.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+                    <button type="submit" class="btn btn-success">Zatwierdź ocenę</button>
+                    <a href="{{ url_for('teacher.dashboard') }}" class="btn btn-secondary">Powrót do Dashboardu</a>
                 </form>
             </div>
         </div>

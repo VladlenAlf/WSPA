@@ -9,7 +9,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header bg-warning">
-                    <h5 class="card-title mb-0">Active Assignments</h5>
+                    <h5 class="card-title mb-0">Aktywne zadania</h5>
                 </div>
                 <div class="card-body">
                     {% if assignments %}
@@ -22,14 +22,14 @@
                                 </div>
                                 <p class="mb-1">{{ assignment.description }}</p>
                                 <a href="{{ url_for('student.submit_assignment', assignment_id=assignment.id) }}" 
-                                   class="btn btn-sm btn-primary">Submit</a>
+                                   class="btn btn-sm btn-primary">Złóż</a>
                                 <a href="{{ url_for('student.view_assignment', assignment_id=assignment.id) }}" 
-                                   class="btn btn-sm btn-primary">View Assignment</a>
+                                   class="btn btn-sm btn-primary">Zobacz zadanie</a>
                             </div>
                         {% endfor %}
                         </div>
                     {% else %}
-                        <p class="text-muted">No active assignments</p>
+                        <p class="text-muted">Brak aktywnych zadań</p>
                     {% endif %}
                 </div>
             </div>
@@ -47,7 +47,7 @@
                 </div>
                 <div class="card-footer">
                     <a href="{{ url_for('student.course_materials', course_id=course.id) }}" 
-                       class="btn btn-primary btn-sm">View Materials</a>
+                       class="btn btn-primary btn-sm">Zobacz materiały</a>
                 </div>
             </div>
         </div>

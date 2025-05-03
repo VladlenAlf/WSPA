@@ -1,18 +1,18 @@
 {% extends "admin/base.html" %}
 
-{% block title %}Admin Dashboard - USOS{% endblock %}
+{% block title %}Panel administratora - USOS{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-12">
-        <h2 class="mb-4">System Overview</h2>
+        <h2 class="mb-4">Przegląd systemu</h2>
         
         <!-- Statistics Cards -->
         <div class="row mb-4">
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Total Users</h5>
+                        <h5 class="card-title">Łączna liczba użytkowników</h5>
                         <h2 class="card-text">{{ total_users }}</h2>
                     </div>
                 </div>
@@ -20,7 +20,7 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Total Courses</h5>
+                        <h5 class="card-title">Łączna liczba kursów</h5>
                         <h2 class="card-text">{{ total_courses }}</h2>
                     </div>
                 </div>
@@ -30,18 +30,18 @@
         <!-- Users Table -->
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0">Users List</h5>
+                <h5 class="mb-0">Lista użytkowników</h5>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Username</th>
-                                <th>Full Name</th>
+                                <th>Nazwa użytkownika</th>
+                                <th>Pełne imię i nazwisko</th>
                                 <th>Email</th>
-                                <th>Role</th>
-                                <th>Actions</th>
+                                <th>Rola</th>
+                                <th>Akcje</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -53,13 +53,13 @@
                                 <td><span class="badge bg-primary">{{ user.role }}</span></td>
                                 <td>
                                     <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" 
-                                       class="btn btn-warning btn-sm">Edit</a>
+                                       class="btn btn-warning btn-sm">Edytuj</a>
                                     {% if user.role != 'admin' %}
                                     <form method="POST" action="{{ url_for('admin.delete_user', user_id=user.id) }}" 
                                           style="display: inline;">
                                         <button type="submit" class="btn btn-danger btn-sm" 
-                                                onclick="return confirm('Are you sure you want to delete this user?')">
-                                            Delete
+                                                onclick="return confirm('Czy na pewno chcesz usunąć tego użytkownika?')">
+                                                Usuń
                                         </button>
                                     </form>
                                     {% endif %}

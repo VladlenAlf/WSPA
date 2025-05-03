@@ -309,17 +309,27 @@ def download_assignment_file(assignment_id):
         flash('Access denied', 'error')
         return redirect(url_for('student.dashboard'))
         
-    if assignment.file_path:
-        try:
-            return send_from_directory(
-                current_app.config['UPLOAD_FOLDER'],
-                assignment.file_path,
-                as_attachment=True
-            )
-        except Exception as e:
-            flash(f'Error downloading file: {str(e)}', 'error')
+    if not assignment.file_path:
+        flash('No file attached to this assignment', 'error')
+        return redirect(url_for('student.view_assignment', assignment_id=assignment_id))
+
+    try:
+        # Handle Windows paths by splitting and taking the last part
+        filename = os.path.basename(assignment.file_path)
+        directory = os.path.dirname(os.path.join(current_app.config['UPLOAD_FOLDER'], assignment.file_path))
+        
+        if not os.path.exists(os.path.join(directory, filename)):
+            flash('File not found', 'error')
+            return redirect(url_for('student.view_assignment', assignment_id=assignment_id))
             
-    return redirect(url_for('student.view_assignment', assignment_id=assignment_id))
+        return send_from_directory(
+            directory,
+            filename,
+            as_attachment=True
+        )
+    except Exception as e:
+        flash(f'Error downloading file: {str(e)}', 'error')
+        return redirect(url_for('student.view_assignment', assignment_id=assignment_id))
 
 @student.route('/student/profile', methods=['GET', 'POST'])
 @login_required

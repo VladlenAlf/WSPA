@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1>Manage Enrollments: {{ course.name }}</h1>
+    <h1>Zarządzaj zapisami do kursu: {{ course.name }}</h1>
 </div>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -20,7 +20,7 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title mb-0">Enrolled Students</h5>
+                <h5 class="card-title mb-0">Zapisani studenci</h5>
             </div>
             <div class="card-body">
                 <div class="list-group">
@@ -30,11 +30,11 @@
                         <form method="POST" style="display: inline;">
                             <input type="hidden" name="student_id" value="{{ student.id }}">
                             <input type="hidden" name="action" value="unenroll">
-                            <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                            <button type="submit" class="btn btn-danger btn-sm">Usuń</button>
                         </form>
                     </div>
                     {% else %}
-                    <p class="text-muted">No students enrolled</p>
+                    <p class="text-muted">Brak zapisanych studentów</p>
                     {% endfor %}
                 </div>
             </div>
@@ -45,7 +45,7 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title mb-0">Available Students</h5>
+                <h5 class="card-title mb-0">Dostępni studenci</h5>
             </div>
             <div class="card-body">
                 <div class="list-group">
@@ -55,11 +55,11 @@
                         <form method="POST" style="display: inline;">
                             <input type="hidden" name="student_id" value="{{ student.id }}">
                             <input type="hidden" name="action" value="enroll">
-                            <button type="submit" class="btn btn-success btn-sm">Add</button>
+                            <button type="submit" class="btn btn-success btn-sm">Dodaj</button>
                         </form>
                     </div>
                     {% else %}
-                    <p class="text-muted">No available students</p>
+                    <p class="text-muted">Brak dostępnych studentów</p>
                     {% endfor %}
                 </div>
             </div>
@@ -68,6 +68,6 @@
 </div>
 
 <div class="mt-3">
-    <a href="{{ url_for('admin.manage_courses') }}" class="btn btn-secondary">Back to Courses</a>
+    <a href="{{ url_for('admin.manage_courses') }}" class="btn btn-secondary">Powrót do kursów</a>
 </div>
 {% endblock %}

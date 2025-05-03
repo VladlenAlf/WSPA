@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1>Create New User</h1>
+    <h1>Utwórz nowego użytkownika</h1>
 </div>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -19,7 +19,7 @@
     <div class="card-body">
         <form method="POST">
             <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
+                <label for="username" class="form-label">Nazwa użytkownika</label>
                 <input type="text" class="form-control" id="username" name="username" required>
             </div>
             <div class="mb-3">
@@ -27,22 +27,22 @@
                 <input type="email" class="form-control" id="email" name="email" required>
             </div>
             <div class="mb-3">
-                <label for="full_name" class="form-label">Full Name</label>
+                <label for="full_name" class="form-label">Pełne imię i nazwisko</label>
                 <input type="text" class="form-control" id="full_name" name="full_name" required>
             </div>
             <div class="mb-3">
-                <label for="role" class="form-label">Role</label>
+                <label for="role" class="form-label">Rola</label>
                 <select class="form-control" id="role" name="role" required>
                     <option value="student">Student</option>
-                    <option value="teacher">Teacher</option>
+                    <option value="teacher">Wykładowca</option>
                     <option value="admin">Admin</option>
                 </select>
             </div>
             <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
+                <label for="password" class="form-label">Hasło</label>
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
-            <button type="submit" class="btn btn-primary">Create User</button>
+            <button type="submit" class="btn btn-primary">Utwórz użytkownika</button>
         </form>
     </div>
 </div>

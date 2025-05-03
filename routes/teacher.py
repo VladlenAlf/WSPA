@@ -60,7 +60,10 @@ def manage_assignments(course_id):
                 assignments_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], 'assignments')
                 os.makedirs(assignments_dir, exist_ok=True)
                 # Save file with unique filename
-                file_path = os.path.join('assignments', f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{filename}")
+                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                file_path = os.path.join('assignments', f"{timestamp}_{filename}")
+                # Convert to Windows path style
+                file_path = file_path.replace('/', '\\')
                 file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], file_path))
 
             assignment = Assignment(
@@ -176,17 +179,25 @@ def download_assignment_file(assignment_id):
     
     if not assignment.file_path:
         flash('No file attached to this assignment', 'error')
-        return redirect(request.referrer or url_for('index'))
+        return redirect(request.referrer or url_for('teacher.dashboard'))
         
     try:
+        # Handle Windows paths by splitting and taking the last part
+        filename = os.path.basename(assignment.file_path)
+        directory = os.path.dirname(os.path.join(current_app.config['UPLOAD_FOLDER'], assignment.file_path))
+        
+        if not os.path.exists(os.path.join(directory, filename)):
+            flash('File not found', 'error')
+            return redirect(request.referrer or url_for('teacher.dashboard'))
+            
         return send_from_directory(
-            current_app.config['UPLOAD_FOLDER'],
-            assignment.file_path,
+            directory,
+            filename,
             as_attachment=True
         )
     except Exception as e:
         flash(f'Error downloading file: {str(e)}', 'error')
-        return redirect(request.referrer or url_for('index'))
+        return redirect(request.referrer or url_for('teacher.dashboard'))
 
 @teacher.route('/assignment/file/<path:filename>')
 @login_required
@@ -216,14 +227,27 @@ def download_submission_file(submission_id):
         flash('Access denied', 'error')
         return redirect(url_for('teacher.dashboard'))
         
-    if submission.file_path:
+    if not submission.file_path:
+        flash('No file attached to this submission', 'error')
+        return redirect(url_for('teacher.view_submission', submission_id=submission_id))
+
+    try:
+        # Handle Windows paths by splitting and taking the last part
+        filename = os.path.basename(submission.file_path)
+        directory = os.path.dirname(os.path.join(current_app.config['UPLOAD_FOLDER'], submission.file_path))
+        
+        if not os.path.exists(os.path.join(directory, filename)):
+            flash('File not found', 'error')
+            return redirect(url_for('teacher.view_submission', submission_id=submission_id))
+            
         return send_from_directory(
-            current_app.config['UPLOAD_FOLDER'],
-            submission.file_path,
+            directory,
+            filename,
             as_attachment=True
         )
-    flash('No file attached to this submission', 'error')
-    return redirect(url_for('teacher.view_submission', submission_id=submission_id))
+    except Exception as e:
+        flash(f'Error downloading file: {str(e)}', 'error')
+        return redirect(url_for('teacher.view_submission', submission_id=submission_id))
 
 @teacher.route('/teacher/messages')
 @login_required
